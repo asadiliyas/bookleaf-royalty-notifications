@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Workflow JSON is in sync with n8n/src
+        run: npm run build:workflows && git diff --exit-code -- n8n/workflows
+      - name: Bubble CSVs are in sync with the dataset
+        run: npm run build:csv && git diff --exit-code -- data/bubble-import
