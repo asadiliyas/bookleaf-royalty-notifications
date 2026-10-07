@@ -1,0 +1,22 @@
+{
+  "name": "bookleaf-royalty-notifications",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BookLeaf Author Royalty Dashboard & Automated Notification System: n8n workflows, Bubble build guide, data import and tests",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "build:workflows": "node scripts/build-workflows.mjs",
+    "build:csv": "node scripts/build-bubble-csv.mjs",
+    "smoke": "node --env-file=.env scripts/webhook-smoke.mjs",
+    "emails": "node --env-file=.env scripts/generate-sample-emails.mjs",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "vitest": "^5.0.3"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

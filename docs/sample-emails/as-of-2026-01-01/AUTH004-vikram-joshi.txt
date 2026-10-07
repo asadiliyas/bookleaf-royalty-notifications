@@ -1,0 +1,33 @@
+Subject: Your BookLeaf royalty summary: ₹3,350 pending
+
+Dear Vikram,
+
+Thank you for partnering with us. Here is your royalty summary as of 1 Jan 2026.
+
+Total earned: ₹15,195
+Total paid: ₹11,845
+Total pending: ₹3,350
+
+Across your published books you have earned ₹15,195, of which ₹11,845 has been paid and ₹3,350 is pending.
+
+YOUR PUBLISHED BOOKS
+
+Debugging Life [Overdue]
+Copies sold 534 | Earned ₹13,350 | Paid ₹10,000 | Pending ₹3,350 | Last payout 20 Aug 2025
+Debugging Life has sold 534 copies, with ₹3,350 pending. The last payout was on 20 Aug 2025, and this balance should have been paid by now (overdue).
+
+The Last Monsoon [Paid up]
+Copies sold 123 | Earned ₹1,845 | Paid ₹1,845 | Pending ₹0 | Last payout 1 Dec 2025
+The Last Monsoon has sold 123 copies and is fully paid with nothing pending.
+
+WHEN YOU'LL BE PAID
+We are aware that the pending payout for Debugging Life is later than it should be, and we apologise for the delay. Our finance team has been alerted about the overdue amount and will update you within 48 hours. Royalties are calculated quarterly and paid within 45 days of the quarter ending, with the next payout for Q4 2025 scheduled to be paid by 14 Feb 2026.
+
+If you have any questions, simply reply to this email or check the detailed breakdown in your BookLeaf dashboard.
+
+Warm regards,
+Team BookLeaf
+Author Relations · BookLeaf Publishing
+
+Figures as of 1 Jan 2026.
+Demo mode: addressed to vikram.joshi@email.com, delivered to the BookLeaf demo inbox.

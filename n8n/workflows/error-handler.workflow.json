@@ -1,0 +1,290 @@
+{
+  "id": "BkLfErrorHandler",
+  "name": "BookLeaf · Error handler",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## BookLeaf · Error handler\nSet as the **Error workflow** of *BookLeaf · Royalty Summary* (Workflow settings). Runs only when the main workflow crashes in a way its own error branches don't handle (for example a bug or an n8n outage mid-run). Bubble already got an HTTP 500 and marked the notification Failed; this marks the run as crashed in the Data Table and emails ops with a link to the execution.",
+        "height": 420,
+        "width": 1180,
+        "color": 3
+      },
+      "id": "f7c0f955-708d-4062-a3b3-88c5ca665e0c",
+      "name": "Note: error handler",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        80
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "c193e837-741f-49be-a42e-b7de05b80dc8",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3896816c-0425-4eb3-af2f-af5225e63179",
+              "name": "email_enabled",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "dd548219-6192-4b54-a637-8917ec5b481f",
+              "name": "from_email",
+              "value": "BookLeaf Author Relations <bookleaf.demo.inbox@example.com>",
+              "type": "string"
+            },
+            {
+              "id": "28c1c803-62ba-47ef-a21d-49d255a07161",
+              "name": "ops_alert_recipient",
+              "value": "bookleaf.demo.inbox@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "6ceb908f-844e-4edc-a081-e35c989eb41d",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        230,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "// Generated from n8n/src/*.js by scripts/build-workflows.mjs. Edit the source files, not this node.\n\nfunction escapeHtml(value) {\n  return String(value ?? \"\")\n    .replace(/&/g, \"&amp;\")\n    .replace(/</g, \"&lt;\")\n    .replace(/>/g, \"&gt;\")\n    .replace(/\"/g, \"&quot;\")\n    .replace(/'/g, \"&#39;\");\n}\n\n/** Error workflow: turns n8n's Error Trigger payload into an ops alert. */\nfunction nodeFormatCrashAlert(errorEvent) {\n  const ex = (errorEvent && errorEvent.execution) || {};\n  const wf = (errorEvent && errorEvent.workflow) || {};\n  const err = ex.error || {};\n  const lastNode = ex.lastNodeExecuted || \"unknown node\";\n  return {\n    execution_id: String(ex.id || \"\"),\n    subject: `[n8n] ${wf.name || \"Workflow\"} crashed at \"${lastNode}\"`,\n    html: `<p><strong>${escapeHtml(wf.name || \"Workflow\")}</strong> stopped unexpectedly.</p>\n<ul>\n<li>Execution: ${escapeHtml(String(ex.id || \"n/a\"))} (${escapeHtml(ex.mode || \"\")})</li>\n<li>Last node: ${escapeHtml(lastNode)}</li>\n<li>Error: ${escapeHtml(err.message || \"n/a\")}</li>\n</ul>\n<p>${ex.url ? `<a href=\"${escapeHtml(ex.url)}\">Open the execution</a>. ` : \"\"}Bubble received an HTTP 500 for this request and marked the notification Failed.</p>`,\n    error_message: String(err.message || \"Unknown error\").slice(0, 500),\n    last_node: lastNode,\n  };\n}\n\n// ---- node entry ----\n\nreturn [{ json: nodeFormatCrashAlert($('Error Trigger').first().json) }];\n"
+      },
+      "id": "61609b3f-c04e-435f-a2b9-bbfb39a4bd47",
+      "name": "Format crash alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "royalty_summary_runs"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "execution_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Format crash alert').first().json.execution_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "crashed",
+            "error_code": "workflow_crashed",
+            "finished_at_ms": "={{ Date.now() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error_code",
+              "displayName": "error_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "finished_at_ms",
+              "displayName": "finished_at_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "750f6980-28d7-43b0-a3b1-54e8139f8a70",
+      "name": "Mark run crashed",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        690,
+        300
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e8a89789-e46a-48a6-a97e-a52c8659eb77",
+              "leftValue": "={{ $('Config').first().json.email_enabled }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "cbb044d0-4f8f-4c83-a4b0-17a12647c57c",
+      "name": "Email enabled?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "email",
+        "operation": "send",
+        "emailFormat": "html",
+        "fromEmail": "={{ $('Config').first().json.from_email }}",
+        "toEmail": "={{ $('Config').first().json.ops_alert_recipient }}",
+        "subject": "={{ $('Format crash alert').first().json.subject }}",
+        "html": "={{ $('Format crash alert').first().json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7386b328-3b5c-4a9c-a266-d6d434a55859",
+      "name": "Alert ops",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1150,
+        220
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "BkLfSmtpGmail001",
+          "name": "BookLeaf SMTP (Gmail)"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Format crash alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format crash alert": {
+      "main": [
+        [
+          {
+            "node": "Mark run crashed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark run crashed": {
+      "main": [
+        [
+          {
+            "node": "Email enabled?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email enabled?": {
+      "main": [
+        [
+          {
+            "node": "Alert ops",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
