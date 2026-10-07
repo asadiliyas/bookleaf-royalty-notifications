@@ -316,6 +316,8 @@ Everything on this page sits in a group that is visible only when `Search for Ap
 - After the logins exist (Part 8), set `signup_open` = no in App data. The page then shows nothing, and there is **no public sign-up anywhere in the app**.
 
 ### 7.6 Page `admin` (operations overview)
+> **Rule for every admin page:** besides the redirect on page load, give **every workflow event on admin pages** (button clicks etc.) the condition **Only when** `Current User's role is Admin`. Bubble evaluates event conditions on its server, so even a hand-crafted request from an author's browser can't run an admin action.
+
 **Page workflows**
 - *Page is loaded* → *Go to page* `index` **Only when** `Current User's role is not Admin`
 - *Page is loaded* → *Schedule API workflow* `refresh_all_statuses` (`as_of` = `Current date/time:rounded down to day`) **Only when** `Search for App Settings:first item's as_of_mode is "today" and Search for App Settings:first item's last_status_refresh < Current date/time:rounded down to day`
@@ -332,7 +334,7 @@ Everything on this page sits in a group that is visible only when `Search for Ap
 - Summary: `Search for Authors:count` authors · total earned `Search for Authors:each item's total_earned:sum` · total pending (same) · overdue authors `Search for Authors (payout_status = Overdue):count`
 - Filters
   - Input `Search author name` (ID `filter-name`)
-  - Dropdown `City` (ID `filter-city`): dynamic choices `Search for Authors:each item's city:unique`, placeholder `All cities`
+  - Dropdown `City` (ID `filter-city`): dynamic choices `Search for Authors:each item's city:unique elements`, placeholder `All cities`
   - Dropdown `Payout status` (ID `filter-status`): type Payout Status, choices `All Payout Statuses` minus `In production`, placeholder `All statuses`
 - **Repeating group `Authors`** (ID `authors-list`): `Search for Authors (name contains Input Search's value, city = Dropdown City's value, payout_status = Dropdown Payout status's value)` with **Ignore empty constraints** ✅, sorted by `name`
   - Columns: Name, City, Books (`total_books`), Earned, Paid, Pending (₹ formatted), status badge (as in 7.2), last summary (`Search for Royalty Notifications (author = Current cell's Author):first item's status's Display`, sorted by `requested_at` descending)
